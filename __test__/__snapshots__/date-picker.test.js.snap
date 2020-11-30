@@ -14,33 +14,23 @@ exports[`DatePicker prop: attrs of input 1`] = `
       placeholder="test placeholder"
       type="number"
     />
-     
-    <!---->
-     
     <i
       class="mx-icon-calendar"
     >
-      <icon-calendar-stub />
+      <anonymous-stub />
     </i>
   </div>
-   
   <popup-stub
     appendtobody="true"
   >
-    <!---->
-     
     <div
       class="mx-datepicker-content"
     >
-      <!---->
-       
       <div
         class="mx-datepicker-body"
       >
         <div />
       </div>
-       
-      <!---->
     </div>
   </popup-stub>
 </div>
@@ -60,39 +50,71 @@ exports[`DatePicker prop: clearable 1`] = `
       placeholder=""
       type="text"
     />
-     
-    <!---->
-     
     <i
       class="mx-icon-calendar"
     >
-      <icon-calendar-stub />
+      <anonymous-stub />
     </i>
   </div>
-   
   <popup-stub
     appendtobody="true"
   >
-    <!---->
-     
     <div
       class="mx-datepicker-content"
     >
-      <!---->
-       
       <div
         class="mx-datepicker-body"
       >
         <div />
       </div>
-       
-      <!---->
     </div>
   </popup-stub>
 </div>
 `;
 
-exports[`DatePicker prop: custom format 1`] = `
+exports[`DatePicker prop: editable 1`] = `
+<div
+  class="mx-datepicker"
+>
+  <div
+    class="mx-input-wrapper"
+  >
+    <input
+      autocomplete="off"
+      class="mx-input"
+      name="date"
+      placeholder=""
+      readonly="readonly"
+      type="text"
+    />
+    <i
+      class="mx-icon-clear"
+    >
+      <anonymous-stub />
+    </i>
+    <i
+      class="mx-icon-calendar"
+    >
+      <anonymous-stub />
+    </i>
+  </div>
+  <popup-stub
+    appendtobody="true"
+  >
+    <div
+      class="mx-datepicker-content"
+    >
+      <div
+        class="mx-datepicker-body"
+      >
+        <div />
+      </div>
+    </div>
+  </popup-stub>
+</div>
+`;
+
+exports[`DatePicker prop: formatter 1`] = `
 <table
   class="mx-table mx-table-date"
 >
@@ -132,15 +154,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="0,0"
       >
         
-        29
-      
+            29
+          
       </td>
        
       <td
         class="cell not-current-month"
-        data-day="-1"
+        data-row-col="0,0"
         title="2019-09-29"
       >
         <div>
@@ -149,7 +172,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="0"
+        data-row-col="0,1"
         title="2019-09-30"
       >
         <div>
@@ -158,7 +181,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="1"
+        data-row-col="0,2"
         title="2019-10-01"
       >
         <div>
@@ -167,7 +190,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="2"
+        data-row-col="0,3"
         title="2019-10-02"
       >
         <div>
@@ -176,7 +199,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="3"
+        data-row-col="0,4"
         title="2019-10-03"
       >
         <div>
@@ -185,7 +208,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="4"
+        data-row-col="0,5"
         title="2019-10-04"
       >
         <div>
@@ -194,7 +217,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="5"
+        data-row-col="0,6"
         title="2019-10-05"
       >
         <div>
@@ -207,15 +230,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="1,0"
       >
         
-        6
-      
+            6
+          
       </td>
        
       <td
         class="cell"
-        data-day="6"
+        data-row-col="1,0"
         title="2019-10-06"
       >
         <div>
@@ -224,7 +248,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="7"
+        data-row-col="1,1"
         title="2019-10-07"
       >
         <div>
@@ -233,7 +257,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="8"
+        data-row-col="1,2"
         title="2019-10-08"
       >
         <div>
@@ -242,7 +266,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="9"
+        data-row-col="1,3"
         title="2019-10-09"
       >
         <div>
@@ -251,7 +275,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="10"
+        data-row-col="1,4"
         title="2019-10-10"
       >
         <div>
@@ -260,7 +284,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="11"
+        data-row-col="1,5"
         title="2019-10-11"
       >
         <div>
@@ -269,7 +293,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="12"
+        data-row-col="1,6"
         title="2019-10-12"
       >
         <div>
@@ -282,15 +306,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="2,0"
       >
         
-        13
-      
+            13
+          
       </td>
        
       <td
         class="cell active"
-        data-day="13"
+        data-row-col="2,0"
         title="2019-10-13"
       >
         <div>
@@ -299,7 +324,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="14"
+        data-row-col="2,1"
         title="2019-10-14"
       >
         <div>
@@ -308,7 +333,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="15"
+        data-row-col="2,2"
         title="2019-10-15"
       >
         <div>
@@ -317,7 +342,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="16"
+        data-row-col="2,3"
         title="2019-10-16"
       >
         <div>
@@ -326,7 +351,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="17"
+        data-row-col="2,4"
         title="2019-10-17"
       >
         <div>
@@ -335,7 +360,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="18"
+        data-row-col="2,5"
         title="2019-10-18"
       >
         <div>
@@ -344,7 +369,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="19"
+        data-row-col="2,6"
         title="2019-10-19"
       >
         <div>
@@ -357,15 +382,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="3,0"
       >
         
-        20
-      
+            20
+          
       </td>
        
       <td
         class="cell"
-        data-day="20"
+        data-row-col="3,0"
         title="2019-10-20"
       >
         <div>
@@ -374,7 +400,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="21"
+        data-row-col="3,1"
         title="2019-10-21"
       >
         <div>
@@ -383,7 +409,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="22"
+        data-row-col="3,2"
         title="2019-10-22"
       >
         <div>
@@ -392,7 +418,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="23"
+        data-row-col="3,3"
         title="2019-10-23"
       >
         <div>
@@ -401,7 +427,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="24"
+        data-row-col="3,4"
         title="2019-10-24"
       >
         <div>
@@ -410,7 +436,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="25"
+        data-row-col="3,5"
         title="2019-10-25"
       >
         <div>
@@ -419,7 +445,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="26"
+        data-row-col="3,6"
         title="2019-10-26"
       >
         <div>
@@ -432,15 +458,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="4,0"
       >
         
-        27
-      
+            27
+          
       </td>
        
       <td
         class="cell"
-        data-day="27"
+        data-row-col="4,0"
         title="2019-10-27"
       >
         <div>
@@ -449,7 +476,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="28"
+        data-row-col="4,1"
         title="2019-10-28"
       >
         <div>
@@ -458,7 +485,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="29"
+        data-row-col="4,2"
         title="2019-10-29"
       >
         <div>
@@ -467,7 +494,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="30"
+        data-row-col="4,3"
         title="2019-10-30"
       >
         <div>
@@ -476,7 +503,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell"
-        data-day="31"
+        data-row-col="4,4"
         title="2019-10-31"
       >
         <div>
@@ -485,7 +512,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="32"
+        data-row-col="4,5"
         title="2019-11-01"
       >
         <div>
@@ -494,7 +521,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="33"
+        data-row-col="4,6"
         title="2019-11-02"
       >
         <div>
@@ -507,15 +534,16 @@ exports[`DatePicker prop: custom format 1`] = `
     >
       <td
         class="mx-week-number"
+        data-row-col="5,0"
       >
         
-        3
-      
+            3
+          
       </td>
        
       <td
         class="cell not-current-month"
-        data-day="34"
+        data-row-col="5,0"
         title="2019-11-03"
       >
         <div>
@@ -524,7 +552,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="35"
+        data-row-col="5,1"
         title="2019-11-04"
       >
         <div>
@@ -533,7 +561,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="36"
+        data-row-col="5,2"
         title="2019-11-05"
       >
         <div>
@@ -542,7 +570,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="37"
+        data-row-col="5,3"
         title="2019-11-06"
       >
         <div>
@@ -551,7 +579,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="38"
+        data-row-col="5,4"
         title="2019-11-07"
       >
         <div>
@@ -560,7 +588,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="39"
+        data-row-col="5,5"
         title="2019-11-08"
       >
         <div>
@@ -569,7 +597,7 @@ exports[`DatePicker prop: custom format 1`] = `
       </td>
       <td
         class="cell not-current-month"
-        data-day="40"
+        data-row-col="5,6"
         title="2019-11-09"
       >
         <div>
@@ -579,55 +607,4 @@ exports[`DatePicker prop: custom format 1`] = `
     </tr>
   </tbody>
 </table>
-`;
-
-exports[`DatePicker prop: editable 1`] = `
-<div
-  class="mx-datepicker"
->
-  <div
-    class="mx-input-wrapper"
-  >
-    <input
-      autocomplete="off"
-      class="mx-input"
-      name="date"
-      placeholder=""
-      readonly="readonly"
-      type="text"
-    />
-     
-    <i
-      class="mx-icon-clear"
-    >
-      <icon-close-stub />
-    </i>
-     
-    <i
-      class="mx-icon-calendar"
-    >
-      <icon-calendar-stub />
-    </i>
-  </div>
-   
-  <popup-stub
-    appendtobody="true"
-  >
-    <!---->
-     
-    <div
-      class="mx-datepicker-content"
-    >
-      <!---->
-       
-      <div
-        class="mx-datepicker-body"
-      >
-        <div />
-      </div>
-       
-      <!---->
-    </div>
-  </popup-stub>
-</div>
 `;

@@ -1,126 +1,7 @@
-<template>
-  <div
-    :class="{
-      [`${prefixClass}-datepicker`]: true,
-      [`${prefixClass}-datepicker-range`]: range,
-      [`${prefixClass}-datepicker-inline`]: inline,
-      disabled: disabled,
-    }"
-  >
-    <div v-if="!inline" :class="`${prefixClass}-input-wrapper`" @mousedown="openPopup">
-      <slot
-        name="input"
-        :props="{
-          name: 'date',
-          type: 'text',
-          autocomplete: 'off',
-          value: text,
-          class: inputClass,
-          readonly: !editable,
-          disabled,
-          placeholder,
-          ...inputAttr,
-        }"
-        :events="{
-          keydown: handleInputKeydown,
-          focus: handleInputFocus,
-          blur: handleInputBlur,
-          input: handleInputInput,
-          change: handleInputChange,
-        }"
-      >
-        <input
-          ref="input"
-          v-bind="{
-            name: 'date',
-            type: 'text',
-            autocomplete: 'off',
-            value: text,
-            class: inputClass,
-            readonly: !editable,
-            disabled,
-            placeholder,
-            ...inputAttr,
-          }"
-          v-on="{
-            keydown: handleInputKeydown,
-            focus: handleInputFocus,
-            blur: handleInputBlur,
-            input: handleInputInput,
-            change: handleInputChange,
-          }"
-        />
-      </slot>
-      <i v-if="showClearIcon" :class="`${prefixClass}-icon-clear`" @mousedown.stop="handleClear">
-        <slot name="icon-clear">
-          <icon-close></icon-close>
-        </slot>
-      </i>
-      <i :class="`${prefixClass}-icon-calendar`">
-        <slot name="icon-calendar">
-          <icon-calendar></icon-calendar>
-        </slot>
-      </i>
-    </div>
-    <Popup
-      ref="popup"
-      :class="popupClass"
-      :style="popupStyle"
-      :inline="inline"
-      :visible="popupVisible"
-      :append-to-body="appendToBody"
-      @clickoutside="handleClickOutSide"
-    >
-      <div
-        v-if="hasSlot('sidebar') || shortcuts.length"
-        :class="`${prefixClass}-datepicker-sidebar`"
-      >
-        <slot name="sidebar" :value="currentValue" :emit="emitValue"></slot>
-        <button
-          v-for="(v, i) in shortcuts"
-          :key="i"
-          type="button"
-          :class="`${prefixClass}-btn ${prefixClass}-btn-text ${prefixClass}-btn-shortcut`"
-          @click="handleSelectShortcut(v)"
-        >
-          {{ v.text }}
-        </button>
-      </div>
-      <div :class="`${prefixClass}-datepicker-content`">
-        <div v-if="hasSlot('header')" :class="`${prefixClass}-datepicker-header`">
-          <slot name="header" :value="currentValue" :emit="emitValue"></slot>
-        </div>
-        <div :class="`${prefixClass}-datepicker-body`">
-          <slot name="content" :value="currentValue" :emit="emitValue">
-            <component
-              :is="currentComponent"
-              ref="picker"
-              v-bind="currentComponentProps"
-              @select="handleSelectDate"
-            ></component>
-          </slot>
-        </div>
-        <div v-if="hasSlot('footer') || confirm" :class="`${prefixClass}-datepicker-footer`">
-          <slot name="footer" :value="currentValue" :emit="emitValue"></slot>
-          <button
-            v-if="confirm"
-            type="button"
-            :class="`${prefixClass}-btn ${prefixClass}-datepicker-btn-confirm`"
-            @click="handleConfirmDate"
-          >
-            {{ confirmText }}
-          </button>
-        </div>
-      </div>
-    </Popup>
-  </div>
-</template>
-
-<script>
 import { parse, format, getWeek } from 'date-format-parse';
 import { isValidDate, isValidRangeDate, isValidDates } from './util/date';
 import { pick, isObject, mergeDeep } from './util/base';
-import { getLocale, getLocaleFieldValue } from './locale';
+import { getLocale } from './locale';
 import Popup from './popup';
 import IconCalendar from './icon/icon-calendar';
 import IconClose from './icon/icon-close';
@@ -144,16 +25,13 @@ const componentRangeMap = {
 
 export default {
   name: 'DatePicker',
-  components: {
-    IconCalendar,
-    IconClose,
-    Popup,
-  },
   provide() {
     return {
-      t: this.getLocaleFieldValue,
+      // make locale reactive
+      getLocale: () => this.locale,
       getWeek: this.getWeek,
       prefixClass: this.prefixClass,
+      dispatchDatePicker: this.$emit.bind(this),
     };
   },
   props: {
@@ -168,18 +46,10 @@ export default {
       default: 'date',
     },
     format: {
-      type: [String, Object],
-      default() {
-        const map = {
-          date: 'YYYY-MM-DD',
-          datetime: 'YYYY-MM-DD HH:mm:ss',
-          year: 'YYYY',
-          month: 'YYYY-MM',
-          time: 'HH:mm:ss',
-          week: 'w',
-        };
-        return map[this.type] || map.date;
-      },
+      type: String,
+    },
+    formatter: {
+      type: Object,
     },
     range: {
       type: Boolean,
@@ -191,9 +61,6 @@ export default {
     },
     rangeSeparator: {
       type: String,
-      default() {
-        return this.multiple ? ',' : ' ~ ';
-      },
     },
     lang: {
       type: [String, Object],
@@ -218,16 +85,10 @@ export default {
       type: String,
       default: 'mx',
     },
-    inputClass: {
-      default() {
-        return `${this.prefixClass}-input`;
-      },
-    },
+    inputClass: {},
     inputAttr: {
       type: Object,
-      default() {
-        return {};
-      },
+      default: () => ({}),
     },
     appendToBody: {
       type: Boolean,
@@ -240,9 +101,7 @@ export default {
     popupClass: {},
     popupStyle: {
       type: Object,
-      default: () => {
-        return {};
-      },
+      default: () => ({}),
     },
     inline: {
       type: Boolean,
@@ -283,19 +142,22 @@ export default {
     };
   },
   computed: {
-    currentComponent() {
-      const map = this.range ? componentRangeMap : componentMap;
-      return map[this.type] || map.default;
-    },
-    currentComponentProps() {
-      const props = {
-        ...pick(this, Object.keys(this.currentComponent.props)),
-        value: this.currentValue,
-      };
-      return props;
-    },
     popupVisible() {
       return !this.disabled && (typeof this.open === 'boolean' ? this.open : this.defaultOpen);
+    },
+    innerRangeSeparator() {
+      return this.rangeSeparator || (this.multiple ? ',' : ' ~ ');
+    },
+    innerFormat() {
+      const map = {
+        date: 'YYYY-MM-DD',
+        datetime: 'YYYY-MM-DD HH:mm:ss',
+        year: 'YYYY',
+        month: 'YYYY-MM',
+        time: 'HH:mm:ss',
+        week: 'w',
+      };
+      return this.format || map[this.type] || map.date;
     },
     innerValue() {
       let { value } = this;
@@ -307,7 +169,7 @@ export default {
         value = Array.isArray(value) ? value.slice(0, 2) : [null, null];
         return value.map(this.value2date);
       }
-      return this.value2date(this.value);
+      return this.value2date(value);
     },
     text() {
       if (this.userInput !== null) {
@@ -319,11 +181,10 @@ export default {
       if (!this.isValidValue(this.innerValue)) {
         return '';
       }
-      const fmt = this.format;
       if (Array.isArray(this.innerValue)) {
-        return this.innerValue.map(v => this.formatDate(v, fmt)).join(this.rangeSeparator);
+        return this.innerValue.map(v => this.formatDate(v)).join(this.innerRangeSeparator);
       }
-      return this.formatDate(this.innerValue, fmt);
+      return this.formatDate(this.innerValue);
     },
     showClearIcon() {
       return !this.disabled && this.clearable && this.text;
@@ -347,6 +208,13 @@ export default {
       },
     },
   },
+  created() {
+    if (typeof this.format === 'object') {
+      console.warn(
+        "[vue2-datepicker]: The prop `format` don't support Object any more. You can use the new prop `formatter` to replace it"
+      );
+    }
+  },
   methods: {
     handleClickOutSide(evt) {
       const { target } = evt;
@@ -354,22 +222,30 @@ export default {
         this.closePopup();
       }
     },
+    getFormatter(key) {
+      return (
+        (isObject(this.formatter) && this.formatter[key]) ||
+        (isObject(this.format) && this.format[key])
+      );
+    },
     getWeek(date, options) {
-      if (isObject(this.format) && typeof this.format.getWeek === 'function') {
-        return this.format.getWeek(date, options);
+      if (typeof this.getFormatter('getWeek') === 'function') {
+        return this.getFormatter('getWeek')(date, options);
       }
       return getWeek(date, options);
     },
     parseDate(value, fmt) {
-      if (isObject(this.format) && typeof this.format.parse === 'function') {
-        return this.format.parse(value, fmt);
+      fmt = fmt || this.innerFormat;
+      if (typeof this.getFormatter('parse') === 'function') {
+        return this.getFormatter('parse')(value, fmt);
       }
       const backupDate = new Date();
       return parse(value, fmt, { locale: this.locale.formatLocale, backupDate });
     },
     formatDate(date, fmt) {
-      if (isObject(this.format) && typeof this.format.stringify === 'function') {
-        return this.format.stringify(date, fmt);
+      fmt = fmt || this.innerFormat;
+      if (typeof this.getFormatter('stringify') === 'function') {
+        return this.getFormatter('stringify')(date, fmt);
       }
       return format(date, fmt, { locale: this.locale.formatLocale });
     },
@@ -381,7 +257,7 @@ export default {
         case 'timestamp':
           return typeof value === 'number' ? new Date(value) : new Date(NaN);
         case 'format':
-          return typeof value === 'string' ? this.parseDate(value, this.format) : new Date(NaN);
+          return typeof value === 'string' ? this.parseDate(value) : new Date(NaN);
         default:
           return typeof value === 'string' ? this.parseDate(value, this.valueType) : new Date(NaN);
       }
@@ -395,7 +271,7 @@ export default {
         case 'timestamp':
           return date.getTime();
         case 'format':
-          return this.formatDate(date, this.format);
+          return this.formatDate(date);
         default:
           return this.formatDate(date, this.valueType);
       }
@@ -455,15 +331,21 @@ export default {
         this.emitValue(val, this.validMultipleType ? `multiple-${type}` : type);
       }
     },
-    handleClear() {
+    clear() {
       this.emitValue(this.range ? [null, null] : null);
       this.$emit('clear');
+    },
+    handleClear(evt) {
+      evt.stopPropagation();
+      this.clear();
     },
     handleConfirmDate() {
       const value = this.emitValue(this.currentValue);
       this.$emit('confirm', value);
     },
-    handleSelectShortcut(item) {
+    handleSelectShortcut(evt) {
+      const index = evt.currentTarget.getAttribute('data-index');
+      const item = this.shortcuts[parseInt(index, 10)];
       if (isObject(item) && typeof item.onClick === 'function') {
         const date = item.onClick(this);
         if (date) {
@@ -499,22 +381,22 @@ export default {
       const text = this.userInput.trim();
       this.userInput = null;
       if (text === '') {
-        this.handleClear();
+        this.clear();
         return;
       }
       let date;
       if (this.validMultipleType) {
-        date = text.split(this.rangeSeparator).map(v => this.parseDate(v.trim(), this.format));
+        date = text.split(this.innerRangeSeparator).map(v => this.parseDate(v.trim()));
       } else if (this.range) {
-        let arr = text.split(this.rangeSeparator);
+        let arr = text.split(this.innerRangeSeparator);
         if (arr.length !== 2) {
           // Maybe the separator during the day is the same as the separator for the date
           // eg: 2019-10-09-2020-01-02
-          arr = text.split(this.rangeSeparator.trim());
+          arr = text.split(this.innerRangeSeparator.trim());
         }
-        date = arr.map(v => this.parseDate(v.trim(), this.format));
+        date = arr.map(v => this.parseDate(v.trim()));
       } else {
-        date = this.parseDate(text, this.format);
+        date = this.parseDate(text);
       }
       if (this.isValidValueAndNotDisabled(date)) {
         this.emitValue(date);
@@ -524,7 +406,8 @@ export default {
       }
     },
     handleInputInput(evt) {
-      this.userInput = evt.target.value;
+      // slot input v-model
+      this.userInput = typeof evt === 'string' ? evt : evt.target.value;
     },
     handleInputKeydown(evt) {
       const { keyCode } = evt;
@@ -546,9 +429,169 @@ export default {
     hasSlot(name) {
       return !!(this.$slots[name] || this.$scopedSlots[name]);
     },
-    getLocaleFieldValue(path) {
-      return getLocaleFieldValue(path, this.locale);
+    renderSlot(name, fallback, props) {
+      const slotFn = this.$scopedSlots[name];
+      if (slotFn) {
+        return slotFn(props) || fallback;
+      }
+      return this.$slots[name] || fallback;
+    },
+    renderInput() {
+      const { prefixClass } = this;
+      const props = {
+        name: 'date',
+        type: 'text',
+        autocomplete: 'off',
+        value: this.text,
+        class: this.inputClass || `${this.prefixClass}-input`,
+        readonly: !this.editable,
+        disabled: this.disabled,
+        placeholder: this.placeholder,
+        ...this.inputAttr,
+      };
+      const { value, ...attrs } = props;
+      const events = {
+        keydown: this.handleInputKeydown,
+        focus: this.handleInputFocus,
+        blur: this.handleInputBlur,
+        input: this.handleInputInput,
+        change: this.handleInputChange,
+      };
+      const input = this.renderSlot(
+        'input',
+        <input value={value} {...{ attrs, on: events }} ref="input" />,
+        {
+          props,
+          events,
+        }
+      );
+      return (
+        <div class={`${prefixClass}-input-wrapper`} onMousedown={this.openPopup}>
+          {input}
+          {this.showClearIcon ? (
+            <i class={`${prefixClass}-icon-clear`} onMousedown={this.handleClear}>
+              {this.renderSlot('icon-clear', <IconClose />)}
+            </i>
+          ) : null}
+          <i class={`${prefixClass}-icon-calendar`}>
+            {this.renderSlot('icon-calendar', <IconCalendar />)}
+          </i>
+        </div>
+      );
+    },
+    renderContent() {
+      const map = this.range ? componentRangeMap : componentMap;
+      const Component = map[this.type] || map.default;
+      const props = {
+        ...pick(this.$props, Object.keys(Component.props)),
+        value: this.currentValue,
+      };
+      const on = {
+        ...pick(this.$listeners, Component.emits || []),
+        select: this.handleSelectDate,
+      };
+      const content = <Component {...{ props, on, ref: 'picker' }} />;
+      return (
+        <div class={`${this.prefixClass}-datepicker-body`}>
+          {this.renderSlot('content', content, {
+            value: this.currentValue,
+            emit: this.handleSelectDate,
+          })}
+        </div>
+      );
+    },
+    renderSidebar() {
+      const { prefixClass } = this;
+      return (
+        <div class={`${prefixClass}-datepicker-sidebar`}>
+          {this.renderSlot('sidebar', null, {
+            value: this.currentValue,
+            emit: this.handleSelectDate,
+          })}
+          {this.shortcuts.map((v, i) => (
+            <button
+              key={i}
+              data-index={i}
+              type="button"
+              class={`${prefixClass}-btn ${prefixClass}-btn-text ${prefixClass}-btn-shortcut`}
+              onClick={this.handleSelectShortcut}
+            >
+              {v.text}
+            </button>
+          ))}
+        </div>
+      );
+    },
+    renderHeader() {
+      return (
+        <div class={`${this.prefixClass}-datepicker-header`}>
+          {this.renderSlot('header', null, {
+            value: this.currentValue,
+            emit: this.handleSelectDate,
+          })}
+        </div>
+      );
+    },
+    renderFooter() {
+      const { prefixClass } = this;
+      return (
+        <div class={`${prefixClass}-datepicker-footer`}>
+          {this.renderSlot('footer', null, {
+            value: this.currentValue,
+            emit: this.handleSelectDate,
+          })}
+          {this.confirm ? (
+            <button
+              type="button"
+              class={`${prefixClass}-btn ${prefixClass}-datepicker-btn-confirm`}
+              onClick={this.handleConfirmDate}
+            >
+              {this.confirmText}
+            </button>
+          ) : null}
+        </div>
+      );
     },
   },
+  render() {
+    const { prefixClass, inline, disabled } = this;
+    const sidedar = this.hasSlot('sidebar') || this.shortcuts.length ? this.renderSidebar() : null;
+    const content = (
+      <div class={`${prefixClass}-datepicker-content`}>
+        {this.hasSlot('header') ? this.renderHeader() : null}
+        {this.renderContent()}
+        {this.hasSlot('footer') || this.confirm ? this.renderFooter() : null}
+      </div>
+    );
+    return (
+      <div
+        class={{
+          [`${prefixClass}-datepicker`]: true,
+          [`${prefixClass}-datepicker-range`]: this.range,
+          [`${prefixClass}-datepicker-inline`]: inline,
+          disabled,
+        }}
+      >
+        {!inline ? this.renderInput() : null}
+        {!inline ? (
+          <Popup
+            ref="popup"
+            class={this.popupClass}
+            style={this.popupStyle}
+            visible={this.popupVisible}
+            appendToBody={this.appendToBody}
+            onClickoutside={this.handleClickOutSide}
+          >
+            {sidedar}
+            {content}
+          </Popup>
+        ) : (
+          <div class={`${prefixClass}-datepicker-main`}>
+            {sidedar}
+            {content}
+          </div>
+        )}
+      </div>
+    );
+  },
 };
-</script>

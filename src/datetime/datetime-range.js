@@ -10,6 +10,7 @@ export default {
       default: 'mx',
     },
   },
+  emits: ['select', 'update:show-time-panel'],
   props: {
     ...CalendarRange.props,
     ...TimeRange.props,
@@ -32,6 +33,9 @@ export default {
   watch: {
     value(val) {
       this.currentValue = val;
+    },
+    defaultTimeVisible(val) {
+      this.$emit('update:show-time-panel', val);
     },
   },
   methods: {
@@ -71,7 +75,7 @@ export default {
   render() {
     const calendarProps = {
       props: {
-        ...pick(this, Object.keys(CalendarRange.props)),
+        ...pick(this.$props, Object.keys(CalendarRange.props)),
         type: 'date',
         value: this.currentValue,
       },
@@ -81,13 +85,13 @@ export default {
     };
     const timeProps = {
       props: {
-        ...pick(this, Object.keys(TimeRange.props)),
+        ...pick(this.$props, Object.keys(TimeRange.props)),
         value: this.currentValue,
         showTimeHeader: true,
       },
       on: {
         select: this.emitDate,
-        'title-click': this.closeTimePanel,
+        clicktitle: this.closeTimePanel,
       },
     };
 
